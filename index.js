@@ -24,6 +24,14 @@ class Action {
         this.throwOnVersionExixts = JSON.parse(process.env.INPUT_THOW_ERROR_IF_VERSION_EXISTS || process.env.THOW_ERROR_IF_VERSION_EXISTS)
 
         const existingSources = this._executeCommand("dotnet nuget list source", { encoding: "utf8" }).stdout;
+        
+        // MGATTUSO: SET SOURCE TYPE WHEN SOURCE ALREADY EXISTS
+        if (this.nugetSource.startsWith(`https://nuget.pkg.github.com/`)) {
+            this.sourceType = "GPR"
+        } else {
+            this.sourceType = "NuGet"
+        }
+        
         if(existingSources.includes(this.nugetSource) === false) {
             let addSourceCmd;
             if (this.nugetSource.startsWith(`https://nuget.pkg.github.com/`)) {
